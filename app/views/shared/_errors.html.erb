@@ -1,0 +1,11 @@
+<%# Validation messages of a form's record; renders nothing when valid. %>
+<% if record.errors.any? %>
+  <div class="alert" role="alert">
+    <p class="alert__title">Please fix the following:</p>
+    <ul>
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
