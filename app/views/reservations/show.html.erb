@@ -1,5 +1,7 @@
 <% content_for :title, "Reservation ##{@reservation.id}" %>
 
+<%= link_to "← All reservations", reservations_path, class: "back-link" %>
+
 <div class="page-header">
   <h1>Reservation #<%= @reservation.id %></h1>
   <%= link_to "Edit", edit_reservation_path(@reservation), class: "btn" %>
@@ -13,5 +15,3 @@
   <div><dt>Total price</dt><dd><%= czk(@reservation.total_price) %></dd></div>
   <div><dt>Customer</dt><dd><%= @reservation.customer_name %><br><%= mail_to @reservation.customer_email %></dd></div>
 </dl>
-
-<p><%= link_to "← All reservations", reservations_path %></p>
