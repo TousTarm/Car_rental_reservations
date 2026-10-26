@@ -13,9 +13,16 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password:
+  username: <%= ENV.fetch("DB_USER") { "root" } %>
+  password: <%= ENV.fetch("DB_PASSWORD") { "" } %>
   host: <%= ENV.fetch("DB_HOST") { "127.0.0.1" } %>
+  # The capacity check locks the car category row and only then counts
+  # reservations. Under MySQL's default REPEATABLE READ, that count could
+  # still read a snapshot taken before the lock (from any earlier SELECT in
+  # the same transaction) and miss a reservation committed meanwhile.
+  # READ COMMITTED makes every query see the latest committed rows.
+  variables:
+    transaction_isolation: READ-COMMITTED
 
 development:
   <<: *default
@@ -51,5 +58,3 @@ test:
 production:
   <<: *default
   database: car_rental_production
-  username: car_rental
-  password: <%= ENV["CAR_RENTAL_DATABASE_PASSWORD"] %>
