@@ -1,0 +1,11 @@
+fabia:
+  name: Skoda Fabia
+  description: Small hatchback for the city.
+  daily_price: 900
+  capacity: 2
+
+octavia:
+  name: Skoda Octavia Combi
+  description: Roomy estate for families.
+  daily_price: 1400
+  capacity: 1
