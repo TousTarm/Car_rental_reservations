@@ -1,24 +1,37 @@
-# README
+# Půjčovna aut
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Jednoduchá rezervační aplikace v Ruby on Rails 8 a MySQL. Zákazník si vybere termín a kategorii vozu a aplikace ohlídá, aby v žádném dni nebylo rezervováno víc aut, než kolik jich kategorie má.
 
-Things you may want to cover:
+> Rozpracováno, README průběžně doplňuji.
 
-* Ruby version
+## Zvolené téma
 
-* System dependencies
+Půjčovna aut. Rezervuje se **kategorie vozu** (např. „Škoda Fabia“, 10 ks), ne konkrétní auto. `capacity` je počet aut v kategorii.
 
-* Configuration
+## Spuštění
 
-* Database creation
+_Doplním._
 
-* Database initialization
+## DECISIONS
 
-* How to run the test suite
+<!-- OWNER: přepsat vlastními slovy -->
 
-* Services (job queues, cache servers, search engines, etc.)
+_Doplním._
 
-* Deployment instructions
+## Proč kontrola kapacity funguje
 
-* ...
+<!-- OWNER: přepsat vlastními slovy -->
+
+_Doplním._
+
+## Jak to vyzkoušet
+
+_Doplním._
+
+## Co bychom udělali jinak s více časem
+
+_Doplním._
+
+## Jak to vzniklo
+
+Celé repo vzniklo s Claude Code pod vedením vlastníka.
