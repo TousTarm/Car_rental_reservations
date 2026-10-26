@@ -1,5 +1,7 @@
 <% content_for :title, "Add car category" %>
 
+<%= link_to "← Back to cars", root_path, class: "back-link" %>
+
 <h1>Add car category</h1>
 
 <%= form_with model: @category, class: "form" do |f| %>
