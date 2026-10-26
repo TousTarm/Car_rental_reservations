@@ -1,0 +1,31 @@
+<% content_for :title, "Add car category" %>
+
+<h1>Add car category</h1>
+
+<%= form_with model: @category, class: "form" do |f| %>
+  <%= render "shared/errors", record: @category %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name, required: true %>
+  </div>
+  <div class="field">
+    <%= f.label :description %>
+    <%= f.text_area :description, rows: 3 %>
+  </div>
+  <div class="form-row">
+    <div class="field">
+      <%= f.label :daily_price, "Price per day (CZK)" %>
+      <%= f.number_field :daily_price, min: 1, step: 1, required: true %>
+    </div>
+    <div class="field">
+      <%= f.label :capacity, "Number of cars" %>
+      <%= f.number_field :capacity, min: 1, step: 1, required: true %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit "Create category", class: "btn btn--primary" %>
+    <%= link_to "Cancel", root_path, class: "btn" %>
+  </div>
+<% end %>
