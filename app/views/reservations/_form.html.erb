@@ -1,0 +1,34 @@
+<%# Shared by new and edit. On edit the category can change; the model then
+    checks capacity in the new category. %>
+<%= form_with model: reservation, class: "form" do |f| %>
+  <%= render "shared/errors", record: reservation %>
+
+  <div class="field">
+    <%= f.label :car_category_id, "Car" %>
+    <%= f.collection_select :car_category_id, CarCategory.order(:name), :id, :name,
+          { prompt: "Choose a car" }, required: true %>
+  </div>
+  <div class="form-row">
+    <div class="field">
+      <%= f.label :start_date, "From" %>
+      <%= f.date_field :start_date, required: true %>
+    </div>
+    <div class="field">
+      <%= f.label :end_date, "To" %>
+      <%= f.date_field :end_date, required: true %>
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :customer_name, "Your name" %>
+    <%= f.text_field :customer_name, required: true, autocomplete: "name" %>
+  </div>
+  <div class="field">
+    <%= f.label :customer_email, "E-mail" %>
+    <%= f.email_field :customer_email, required: true, autocomplete: "email" %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit class: "btn btn--primary" %>
+    <%= link_to "Cancel", reservation.persisted? ? reservation : root_path, class: "btn" %>
+  </div>
+<% end %>
