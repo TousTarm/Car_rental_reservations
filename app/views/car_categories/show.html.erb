@@ -1,11 +1,14 @@
 <% content_for :title, @category.name %>
+<% search = { start_date: @start_date, end_date: @end_date }.compact %>
+
+<%= link_to "← Back to cars", root_path(search), class: "back-link" %>
 
 <div class="page-header">
   <div>
     <h1><%= @category.name %></h1>
     <p class="lead"><%= @category.description %></p>
   </div>
-  <%= link_to "Book this car", new_reservation_path(car_category_id: @category.id), class: "btn btn--primary" %>
+  <%= link_to "Book this car", new_reservation_path(car_category_id: @category.id, **search), class: "btn btn--primary" %>
 </div>
 
 <dl class="facts">
@@ -13,6 +16,46 @@
   <div><dt>Cars in category</dt><dd><%= @category.capacity %></dd></div>
   <div><dt>Reservations</dt><dd><%= @reservations.size %></dd></div>
 </dl>
+
+<section class="calendar">
+  <div class="calendar__header">
+    <%= link_to "← #{@month.prev_month.strftime("%b")}",
+          car_category_path(@category, month: @month.prev_month.strftime("%Y-%m"), **search), class: "btn" %>
+    <h2><%= @month.strftime("%B %Y") %></h2>
+    <%= link_to "#{@month.next_month.strftime("%b")} →",
+          car_category_path(@category, month: @month.next_month.strftime("%Y-%m"), **search), class: "btn" %>
+  </div>
+
+  <div class="calendar__grid">
+    <% %w[Mon Tue Wed Thu Fri Sat Sun].each do |weekday| %>
+      <div class="calendar__weekday"><%= weekday %></div>
+    <% end %>
+
+    <% @free_by_day.each do |day, free| %>
+      <%
+        classes = [ "calendar__day" ]
+        classes << "calendar__day--other-month" if day.month != @month.month
+        classes << "calendar__day--past" if day < Date.current
+        classes << (free.zero? ? "calendar__day--full" : free < @category.capacity ? "calendar__day--partial" : "calendar__day--free")
+        classes << "calendar__day--selected" if @start_date && @end_date && day.between?(@start_date, @end_date)
+      %>
+      <div class="<%= classes.join(" ") %>">
+        <span class="calendar__date"><%= day.day %></span>
+        <span class="calendar__free"><%= free.zero? ? "Full" : "#{free}/#{@category.capacity}" %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <p class="calendar__legend">
+    <span class="legend legend--free">All free</span>
+    <span class="legend legend--partial">Some free</span>
+    <span class="legend legend--full">Sold out</span>
+    <% if @start_date && @end_date %>
+      <span class="legend legend--selected">Your dates</span>
+    <% end %>
+    <span class="muted">Numbers show free cars out of <%= @category.capacity %>.</span>
+  </p>
+</section>
 
 <h2>Reservations</h2>
 <% if @reservations.any? %>
