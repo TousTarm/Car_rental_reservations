@@ -71,6 +71,13 @@ class CarCategoryTest < ActiveSupport::TestCase
     assert_equal 2, @category.free_units(day(1), day(5))
   end
 
+  test "free_units_by_day gives the free cars of every day" do
+    book(day(2), day(3))
+    book(day(3), day(3))
+    expected = { day(1) => 2, day(2) => 1, day(3) => 0, day(4) => 2 }
+    assert_equal expected, @category.free_units_by_day(day(1), day(4))
+  end
+
   test "price_for counts both end days" do
     assert_equal 3000, @category.price_for(day(1), day(3))
   end
