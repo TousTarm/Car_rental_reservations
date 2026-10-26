@@ -1,0 +1,39 @@
+<% content_for :title, @category.name %>
+
+<div class="page-header">
+  <div>
+    <h1><%= @category.name %></h1>
+    <p class="lead"><%= @category.description %></p>
+  </div>
+  <%= link_to "Book this car", new_reservation_path(car_category_id: @category.id), class: "btn btn--primary" %>
+</div>
+
+<dl class="facts">
+  <div><dt>Price per day</dt><dd><%= czk(@category.daily_price) %></dd></div>
+  <div><dt>Cars in category</dt><dd><%= @category.capacity %></dd></div>
+  <div><dt>Reservations</dt><dd><%= @reservations.size %></dd></div>
+</dl>
+
+<h2>Reservations</h2>
+<% if @reservations.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Customer</th><th>From</th><th>To</th><th>Days</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr>
+            <td><%= reservation.customer_name %></td>
+            <td><%= reservation.start_date.to_fs(:long) %></td>
+            <td><%= reservation.end_date.to_fs(:long) %></td>
+            <td><%= reservation.days %></td>
+            <td><%= link_to "Show", reservation %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="muted">No reservations yet, all cars are free.</p>
+<% end %>
