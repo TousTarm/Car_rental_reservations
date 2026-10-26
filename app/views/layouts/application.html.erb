@@ -37,5 +37,18 @@
       <% end %>
       <%= yield %>
     </main>
+
+    <footer class="site-footer">
+      Tomáš Rindt · co-authored by <%= link_to "Claude", "https://claude.com/claude-code" %>
+    </footer>
+
+    <%# Demo shortcuts, kept out of the main UI. <details> opens without any JavaScript.
+        Day offsets must match db/seeds.rb. %>
+    <details class="demo-panel">
+      <summary>Demo scenarios</summary>
+      <% [ [ "Almost full", 14, 16 ], [ "Sold out", 10, 12 ], [ "Overlapping, still free", 25, 29 ], [ "All free", 40, 42 ] ].each do |label, from, to| %>
+        <%= link_to label, root_path(start_date: Date.current + from, end_date: Date.current + to) %>
+      <% end %>
+    </details>
   </body>
 </html>
