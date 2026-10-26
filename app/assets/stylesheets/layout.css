@@ -71,7 +71,8 @@ main.container {
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+  /* Rows get their spacing from .field's margin, so only columns need a gap. */
+  column-gap: var(--space-4);
 }
 
 @media (max-width: 600px) {
