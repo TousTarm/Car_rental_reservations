@@ -99,9 +99,4 @@ main.container {
   .form-row {
     grid-template-columns: 1fr;
   }
-
-  /* Keep the footer text clear of the demo panel in the corner. */
-  .site-footer {
-    padding-bottom: var(--space-12);
-  }
 }
