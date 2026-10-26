@@ -271,24 +271,152 @@
   margin-right: var(--space-3);
 }
 
-/* Quick links to the sample data scenarios on the home page */
-.quick-picks {
+/* Back link above page headings */
+.back-link {
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  color: var(--color-muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Availability calendar on the car category page */
+.calendar {
+  margin-bottom: var(--space-8);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.calendar__header h2 {
+  margin: 0;
+  text-align: center;
+}
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+}
+
+.calendar__weekday {
+  padding-bottom: var(--space-1);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.calendar__day {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 4rem;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-small);
+}
+
+.calendar__date {
+  font-weight: 600;
+}
+
+.calendar__free {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.calendar__day--free,
+.legend--free::before {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.calendar__day--partial,
+.legend--partial::before {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.calendar__day--full,
+.legend--full::before {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.calendar__day--selected,
+.legend--selected::before {
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.calendar__day--other-month,
+.calendar__day--past {
+  opacity: 0.4;
+}
+
+.calendar__legend {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
+  gap: var(--space-2) var(--space-4);
+  margin: var(--space-4) 0 0;
+  font-size: 0.85rem;
 }
 
-.chip {
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
+.legend::before {
+  content: "";
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: var(--space-1);
+  border-radius: 4px;
+  vertical-align: -0.1rem;
+}
+
+@media (max-width: 600px) {
+  .calendar {
+    padding: var(--space-3);
+  }
+
+  .calendar__day {
+    min-height: 3rem;
+    padding: var(--space-1);
+  }
+
+  .calendar__free {
+    font-size: 0.65rem;
+  }
+}
+
+/* Demo scenario shortcuts, a small panel in the corner outside the main UI */
+.demo-panel {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  max-width: calc(100vw - 2 * var(--space-4));
+  padding: var(--space-2) var(--space-4);
   background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  box-shadow: var(--shadow);
   font-size: 0.9rem;
-  text-decoration: none;
 }
 
-.chip:hover {
-  border-color: var(--color-primary);
+.demo-panel summary {
+  color: var(--color-muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demo-panel a {
+  display: block;
+  padding: var(--space-1) 0;
 }
