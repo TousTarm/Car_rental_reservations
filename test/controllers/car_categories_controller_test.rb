@@ -31,6 +31,25 @@ class CarCategoriesControllerTest < ActionDispatch::IntegrationTest
     assert_select "td", "Alice Novak"
   end
 
+  test "show has a calendar of free cars with the searched dates highlighted" do
+    # Monday to Wednesday of next week always sit in one row of the month grid.
+    monday = Date.current.next_week
+    octavia = car_categories(:octavia)
+    octavia.reservations.create!(customer_name: "Bob", customer_email: "bob@example.com",
+                                 start_date: monday, end_date: monday + 1)
+    get car_category_path(octavia, start_date: monday, end_date: monday + 2)
+    assert_response :success
+    assert_select ".calendar__day--selected", 3
+    assert_select ".calendar__day--selected.calendar__day--full", 2
+    assert_select ".calendar__day--selected.calendar__day--free .calendar__free", "1/1"
+  end
+
+  test "show ignores malformed dates in the URL" do
+    get car_category_path(car_categories(:fabia), month: "garbage", start_date: "x", end_date: "2026-13-01")
+    assert_response :success
+    assert_select ".calendar__day--selected", 0
+  end
+
   test "creates a category" do
     get new_car_category_path
     assert_response :success
