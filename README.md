@@ -15,11 +15,35 @@ Průběh:
 
 ## Spuštění
 
-Potřeba: Ruby 3.4 a MySQL 8.
+Potřeba: Ruby 3.2 nebo novější (vyvíjeno na 3.4.9, viz `.ruby-version`), MySQL 8 a překladač pro gem `mysql2`. Postup podle systému:
 
-**NixOS / Nix:** `nix-shell` připraví Ruby, MySQL a knihovny pro gem `mysql2`. Pokud MySQL neběží, spustí ho lokálně na `127.0.0.1:3306` s daty v `tmp/mysql` (uživatel `root` bez hesla). Vypnutí: `mysqladmin -h 127.0.0.1 -u root shutdown`.
+**macOS (Homebrew)**
 
-**Jinde:** stačí vlastní Ruby 3.4 a běžící MySQL.
+```sh
+brew install rbenv ruby-build mysql zstd
+rbenv install            # nainstaluje verzi z .ruby-version
+brew services start mysql
+```
+
+Homebrew MySQL má uživatele `root` bez hesla, takže výchozí nastavení níže funguje. Kdyby `bundle install` nepřeložil `mysql2`, pomůže:
+`bundle config set build.mysql2 "--with-opt-dir=$(brew --prefix openssl) --with-ldflags=-L$(brew --prefix zstd)/lib"`
+
+**Debian / Ubuntu**
+
+```sh
+sudo apt install ruby-full build-essential libyaml-dev default-libmysqlclient-dev
+sudo apt install mysql-server      # Ubuntu; na Debianu 13 mariadb-server
+sudo mysql -e "CREATE USER 'rails'@'localhost' IDENTIFIED BY 'rails'; GRANT ALL ON *.* TO 'rails'@'localhost';"
+export DB_HOST=localhost DB_USER=rails DB_PASSWORD=rails
+export GEM_HOME="$HOME/.gems" PATH="$HOME/.gems/bin:$PATH"   # gemy bez sudo
+gem install bundler
+```
+
+`root` se tu přihlašuje přes systémový účet, proto vlastní uživatel. MariaDB musí být verze 11.1 nebo novější, starší nezná nastavení `transaction_isolation` použité v `config/database.yml`.
+
+**Windows:** nejjednodušší cesta je WSL2 s Ubuntu (`wsl --install -d Ubuntu`) a uvnitř postup pro Debian / Ubuntu. Přímo ve Windows se `mysql2` překládá obtížně.
+
+**NixOS / Nix:** `nix-shell` připraví Ruby, MySQL a knihovny pro `mysql2`. Pokud MySQL neběží, spustí ho lokálně na `127.0.0.1:3306` s daty v `tmp/mysql` (uživatel `root` bez hesla). Vypnutí: `mysqladmin -h 127.0.0.1 -u root shutdown`.
 
 Připojení k databázi se nastavuje proměnnými prostředí:
 
@@ -40,8 +64,6 @@ bin/rails test         # testy modelů a controllerů
 
 ## DECISIONS
 
-<!-- OWNER: přepsat vlastními slovy -->
-
 **Modely.** `CarCategory` (`name`, `description`, `daily_price`, `capacity`) má mnoho `Reservation` (`customer_name`, `customer_email`, `start_date`, `end_date`). Zákazníka jsem jako samostatný model nevytvářel: bez přihlášení by to byla jen tabulka se jménem a e-mailem navíc.
 
 **Celé dny.** `start_date` a `end_date` jsou typu `date` a auto je obsazené **včetně obou dnů** (vyzvednutí i vrácení). Rezervace 10.–12. tedy trvá 3 dny a stojí 3 × denní cena. Kdo vrací auto 12., blokuje ho i 12., takže nová rezervace může začít nejdřív 13. Je to jednodušší a srozumitelnější než hodiny, za cenu horšího využití aut.
@@ -61,8 +83,6 @@ bin/rails test         # testy modelů a controllerů
 **Stack.** Rails 8.1 bez JavaScriptu (formuláře fungují čistě přes HTML), bez Dockeru, Kamalu, Solid\* a bez gemů navíc. CSS je vlastní, ve třech souborech (`base.css` s proměnnými, `layout.css`, `components.css`).
 
 ## Proč kontrola kapacity funguje
-
-<!-- OWNER: přepsat vlastními slovy -->
 
 Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží víc rezervací, než je aut. `free_units` proto pro každý den nové rezervace spočítá, kolik existujících rezervací ten den pokrývá, a vezme nejvytíženější den. Když je i v něm aspoň jedno auto volné, je volné po celou dobu. Nestačí spočítat rezervace, které se s novou překrývají: při kapacitě 2 se rezervace 1.–3., 4.–6. a 7.–10. všechny překrývají s 1.–10., ale nikdy neběží dvě najednou, takže se nová vejde.
 
