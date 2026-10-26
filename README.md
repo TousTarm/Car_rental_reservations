@@ -69,6 +69,8 @@ Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží v�
 
 Seeds počítají data relativně k dnešku („+14“ = za 14 dní), takže jsou vždy v budoucnosti. Konkrétní data vypíše `bin/rails db:setup` (nebo `bin/rails db:seed`).
 
+Nejrychlejší cesta: pod hledáním na úvodní stránce jsou odkazy **Almost full · Sold out · Overlapping, still free · All free**. Každý jen vyplní termín jednoho scénáře, data nemění. Posuny dní v odkazech musí odpovídat `db/seeds.rb`.
+
 | Kategorie | Aut | Situace |
 |---|---|---|
 | Škoda Fabia | 10 | 9 rezervací se překrývá ve dnech +14 až +16 |
