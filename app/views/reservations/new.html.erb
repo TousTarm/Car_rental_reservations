@@ -1,4 +1,6 @@
 <% content_for :title, "New reservation" %>
 
+<%= link_to "← Back to cars", root_path({ start_date: @reservation.start_date, end_date: @reservation.end_date }.compact), class: "back-link" %>
+
 <h1>New reservation</h1>
 <%= render "form", reservation: @reservation %>
