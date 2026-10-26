@@ -30,7 +30,7 @@ CarCategory.create!(name: "Skoda Kamiq", daily_price: 1300, capacity: 4,
 # Fabia, 10 cars: nine reservations differ in length but all cover days
 # +14 to +16. One more car fits in that period, an eleventh does not.
 fabia_busy = today + 14
-[[-2, 2], [-1, 2], [0, 2], [0, 3], [0, 4], [-3, 2], [0, 5], [-1, 3], [0, 2]].each do |from, to|
+[ [ -2, 2 ], [ -1, 2 ], [ 0, 2 ], [ 0, 3 ], [ 0, 4 ], [ -3, 2 ], [ 0, 5 ], [ -1, 3 ], [ 0, 2 ] ].each do |from, to|
   book.call(fabia, fabia_busy + from, fabia_busy + to)
 end
 
