@@ -70,7 +70,7 @@ Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží v�
 
 Seeds počítají data relativně k dnešku („+14“ = za 14 dní), takže jsou vždy v budoucnosti. Konkrétní data vypíše `bin/rails db:setup` (nebo `bin/rails db:seed`).
 
-Nejrychlejší cesta: v pravém dolním rohu každé stránky je panel **Demo scenarios** s odkazy Almost full · Sold out · Overlapping, still free · All free. Každý jen vyplní termín jednoho scénáře, data nemění. Posuny dní v odkazech (v `app/views/layouts/application.html.erb`) musí odpovídat `db/seeds.rb`. Tlačítko „Calendar“ u karty pak ukáže stejný termín v kalendáři kategorie.
+Nejrychlejší cesta: na každé stránce je panel **Demo** s odkazy Almost full · Sold out · Overlapping · All free. Na širokém displeji je připnutý vlevo uprostřed, na užším je nad patičkou. Každý jen vyplní termín jednoho scénáře, data nemění. Posuny dní v odkazech (v `app/views/layouts/application.html.erb`) musí odpovídat `db/seeds.rb`. Tlačítko „Calendar“ u karty pak ukáže stejný termín v kalendáři kategorie.
 
 | Kategorie | Aut | Situace |
 |---|---|---|
