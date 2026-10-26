@@ -1,0 +1,33 @@
+<% content_for :title, "Reservations" %>
+
+<div class="page-header">
+  <h1>Reservations</h1>
+  <%= link_to "New reservation", new_reservation_path, class: "btn btn--primary" %>
+</div>
+
+<% if @reservations.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Customer</th><th>Car</th><th>From</th><th>To</th><th>Total</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr>
+            <td><%= reservation.customer_name %></td>
+            <td><%= link_to reservation.car_category.name, reservation.car_category %></td>
+            <td><%= reservation.start_date.to_fs(:long) %></td>
+            <td><%= reservation.end_date.to_fs(:long) %></td>
+            <td><%= czk(reservation.total_price) %></td>
+            <td class="table__actions">
+              <%= link_to "Show", reservation %>
+              <%= link_to "Edit", edit_reservation_path(reservation) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="muted">No reservations yet.</p>
+<% end %>
