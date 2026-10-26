@@ -1,0 +1,17 @@
+<% content_for :title, "Reservation ##{@reservation.id}" %>
+
+<div class="page-header">
+  <h1>Reservation #<%= @reservation.id %></h1>
+  <%= link_to "Edit", edit_reservation_path(@reservation), class: "btn" %>
+</div>
+
+<dl class="facts">
+  <div><dt>Car</dt><dd><%= link_to @reservation.car_category.name, @reservation.car_category %></dd></div>
+  <div><dt>From</dt><dd><%= @reservation.start_date.to_fs(:long) %></dd></div>
+  <div><dt>To</dt><dd><%= @reservation.end_date.to_fs(:long) %></dd></div>
+  <div><dt>Days</dt><dd><%= @reservation.days %></dd></div>
+  <div><dt>Total price</dt><dd><%= czk(@reservation.total_price) %></dd></div>
+  <div><dt>Customer</dt><dd><%= @reservation.customer_name %><br><%= mail_to @reservation.customer_email %></dd></div>
+</dl>
+
+<p><%= link_to "← All reservations", reservations_path %></p>
