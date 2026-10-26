@@ -15,6 +15,14 @@
     </div>
     <%= f.submit "Show available cars", name: nil, class: "btn btn--primary" %>
   <% end %>
+
+  <%# Shortcuts to the sample data scenarios. Day offsets must match db/seeds.rb. %>
+  <p class="quick-picks">
+    <span class="muted">Try:</span>
+    <% [ [ "Almost full", 14, 16 ], [ "Sold out", 10, 12 ], [ "Overlapping, still free", 25, 29 ], [ "All free", 40, 42 ] ].each do |label, from, to| %>
+      <%= link_to label, root_path(start_date: Date.current + from, end_date: Date.current + to), class: "chip" %>
+    <% end %>
+  </p>
 </section>
 
 <% if @date_errors.present? %>
