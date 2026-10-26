@@ -4,7 +4,7 @@ Jednoduchá rezervační aplikace v Ruby on Rails 8 a MySQL. Zákazník si vyber
 
 ## Zvolené téma
 
-Půjčovna aut. Rezervuje se **kategorie vozu** (např. „Škoda Fabia“, 10 ks), ne konkrétní auto. `capacity` je počet aut v kategorii. Zákazníkovi je jedno, kterou Fabii dostane, a díky tomu má kapacita smysl. U konkrétního auta by byla vždy 1.
+Vybral jsem si půjčovnu aut, protože mi přijde jako nejlogičtější rezervační systém kde nerezervuji konkrétní položku, ale její kategorii. `capacity` je počet aut v kategorii. Zákazníka nezajímá kterou Fabii dostane, a díky tomu má kapacita smysl. U konkrétního auta by byla vždy 1, a v reálné aplikaci by se uživateli zobrazovala pouze dostupnost, nikoliv počet dostupných.
 
 Průběh:
 1. Na úvodní stránce zákazník zadá termín Od–Do a uvidí karty kategorií s cenou za den, celkovou cenou a počtem volných aut. Plné kategorie mají štítek „Sold out“ a nejdou vybrat.
@@ -43,7 +43,7 @@ gem install bundler
 
 **Windows:** nejjednodušší cesta je WSL2 s Ubuntu (`wsl --install -d Ubuntu`) a uvnitř postup pro Debian / Ubuntu. Přímo ve Windows se `mysql2` překládá obtížně.
 
-**NixOS / Nix:** `nix-shell` připraví Ruby, MySQL a knihovny pro `mysql2`. Pokud MySQL neběží, spustí ho lokálně na `127.0.0.1:3306` s daty v `tmp/mysql` (uživatel `root` bez hesla). Vypnutí: `mysqladmin -h 127.0.0.1 -u root shutdown`.
+**NixOS / Nix:** (jedná se o můj osobní operační systém na kterém jsem aplikaci vyvíjel) `nix-shell` připraví Ruby, MySQL a knihovny pro `mysql2`. Pokud MySQL neběží, spustí ho lokálně na `127.0.0.1:3306` s daty v `tmp/mysql` (uživatel `root` bez hesla). Vypnutí: `mysqladmin -h 127.0.0.1 -u root shutdown`.
 
 Připojení k databázi se nastavuje proměnnými prostředí:
 
@@ -64,15 +64,15 @@ bin/rails test         # testy modelů a controllerů
 
 ## DECISIONS
 
-**Modely.** `CarCategory` (`name`, `description`, `daily_price`, `capacity`) má mnoho `Reservation` (`customer_name`, `customer_email`, `start_date`, `end_date`). Zákazníka jsem jako samostatný model nevytvářel: bez přihlášení by to byla jen tabulka se jménem a e-mailem navíc.
+**Modely.** `CarCategory` (`name`, `description`, `daily_price`, `capacity`) 1 : N `Reservation` (`customer_name`, `customer_email`, `start_date`, `end_date`). Zákazníka jsem jako samostatný model nevytvářel: bez přihlášení by to byla jen tabulka se jménem a e-mailem navíc.
 
-**Celé dny.** `start_date` a `end_date` jsou typu `date` a auto je obsazené **včetně obou dnů** (vyzvednutí i vrácení). Rezervace 10.–12. tedy trvá 3 dny a stojí 3 × denní cena. Kdo vrací auto 12., blokuje ho i 12., takže nová rezervace může začít nejdřív 13. Je to jednodušší a srozumitelnější než hodiny, za cenu horšího využití aut.
+**Celé dny.** `start_date` a `end_date` jsou typu `date` a auto je obsazené **včetně obou dnů** (vyzvednutí i vrácení). Rezervace 10.–12. tedy trvá 3 dny a stojí 3 × denní cena. Kdo vrací auto 12., blokuje ho i 12., takže nová rezervace může začít nejdřív 13. Je to jednodušší a srozumitelnější než hodiny, za cenu horšího využití aut. Jedná se čistě o zjednodušení, jelikož auta musí procházet například čistícím procesem po předání a je to tak jistější.
 
 **Cena** je v celých korunách (`integer`, ne `decimal`) a nikam se neukládá, počítá se metodou `CarCategory#price_for` / `Reservation#total_price`.
 
 **Kde je logika.** Všechno je v modelech, controllery jen načtou parametry, zavolají `save`/`update` a vykreslí výsledek. Dostupnost počítá jediná metoda `CarCategory#free_units_by_day(start_date, end_date, exclude: nil)`, která vrátí počet volných aut pro každý den. Z ní čte kalendář a `free_units` z ní bere minimum, tedy kolik aut je volných po celou dobu. `free_units` volá validace rezervace i úvodní stránka. Validace, úvodní stránka i kalendář tak počítají totéž a nemůžou si odporovat: co aplikace ukáže jako volné, to jde i uložit. Ze stejného důvodu hledání na úvodní stránce kontroluje termín validacemi rezervace (ne v minulosti, konec po začátku, max. 30 dní).
 
-**Validace rezervace.** Povinná pole, formát e-mailu, `end_date >= start_date`, `start_date` ne v minulosti (jen u nové rezervace nebo při změně začátku, aby šla upravit i rozjetá rezervace), nejvýš 30 dní a kapacita. Kontrola kapacity běží až nakonec a jen tehdy, když ostatní validace prošly, aby uživatel neviděl matoucí hlášku o dostupnosti u nesmyslného termínu.
+**Validace rezervace.** Povinná pole, formát e-mailu, `end_date >= start_date`, `start_date` ne v minulosti (jen u nové rezervace nebo při změně začátku, aby šla upravit i existující rezervace), nejvýš 30 dní a kapacita (30 dní je kompletně arbitrární hodnota, je však třeba nějakou mít aby rezervace nemohla být absurdně dlouhá či rovnou nekonečná). Kontrola kapacity běží až nakonec a jen tehdy, když ostatní validace prošly, aby uživatel neviděl matoucí hlášku o dostupnosti u nesmyslného termínu.
 
 **Editace.** Rezervace se nepočítá sama proti sobě (`exclude: id`). Při přesunu do jiné kategorie se kapacita kontroluje v té nové.
 
@@ -82,9 +82,9 @@ bin/rails test         # testy modelů a controllerů
 
 **Stack.** Rails 8.1 bez JavaScriptu (formuláře fungují čistě přes HTML), bez Dockeru, Kamalu, Solid\* a bez gemů navíc. CSS je vlastní, ve třech souborech (`base.css` s proměnnými, `layout.css`, `components.css`).
 
-## Proč kontrola kapacity funguje
+## Proč algoritmus kapacity funguje
 
-Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží víc rezervací, než je aut. `free_units` proto pro každý den nové rezervace spočítá, kolik existujících rezervací ten den pokrývá, a vezme nejvytíženější den. Když je i v něm aspoň jedno auto volné, je volné po celou dobu. Nestačí spočítat rezervace, které se s novou překrývají: při kapacitě 2 se rezervace 1.–3., 4.–6. a 7.–10. všechny překrývají s 1.–10., ale nikdy neběží dvě najednou, takže se nová vejde.
+Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží víc rezervací, než kolik má kategorie aut. Metoda `free_units` proto pro každý den nové rezervace spočítá, kolik existujících rezervací ten den pokrývá, a vezme nejvytíženější den. Pokud je i v něm aspoň jedno auto volné, je volné po celou dobu. Nestačí přitom jen spočítat rezervace, které se s novou překrývají, protože se nemusí překrývat ve stejný den. Při kapacitě 2 se rezervace 1.–3., 4.–6. a 7.–10. všechny překrývají s novou 1.–10., ale nikdy neběží dvě najednou, takže se nová vejde. Konkrétní auto se přiděluje až při převzetí a zákazník ho drží celou dobu. Protože v žádném dni není rezervací víc než aut, je při převzetí vždy nějaké auto volné, a není proto potřeba rezervace přeskládávat.
 
 ## Jak to vyzkoušet
 
@@ -109,6 +109,7 @@ Nejrychlejší cesta: na každé stránce je panel **Demo** s odkazy Almost full
 ## Co bychom udělali jinak s více časem
 
 - **Konkrétní auta:** model `Car` v kategorii a přidělení konkrétního auta až při převzetí (SPZ, stav).
+- **Loadbalancing:** v reálném světě bych chtěl zátěž na autech dlouhodobě balancovat aby nový zákazník vždy obdržel auto v nejlepší kvalitě a nedostal ojeté auto zatím co mám v rezervě několik téměř neopotřebovaných. To však vyžaduje model `Car`.
 - **Úklidová doba** mezi vrácením a dalším pronájmem a **hodinové rezervace** místo celých dní, aby šlo auto vrácené ráno půjčit odpoledne.
 - **Kilometry a poškození** při převzetí a vrácení.
 - **Přihlášení** zákazníků a správců. Teď může kdokoli upravit kteroukoli rezervaci nebo přidat kategorii.
@@ -120,4 +121,4 @@ Nejrychlejší cesta: na každé stránce je panel **Demo** s odkazy Almost full
 
 ## Jak to vzniklo
 
-Celé repo vzniklo s Claude Code pod vedením vlastníka. Commity jsou po jednotlivých souborech, takže historie ukazuje postup krok za krokem. U logiky vždy nejdřív vznikl test a teprve potom implementace.
+Celé repo vzniklo s Claude Code pod mým vedením. Commity jsou po jednotlivých souborech, takže historie ukazuje postup krok za krokem. U logiky vždy nejdřív vznikl test a teprve potom implementace.
