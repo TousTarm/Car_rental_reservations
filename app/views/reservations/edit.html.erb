@@ -1,4 +1,6 @@
 <% content_for :title, "Edit reservation" %>
 
+<%= link_to "← Back to reservation", @reservation, class: "back-link" %>
+
 <h1>Edit reservation</h1>
 <%= render "form", reservation: @reservation %>
