@@ -84,7 +84,7 @@ bin/rails test         # testy modelů a controllerů
 
 ## Proč algoritmus kapacity funguje
 
-Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží víc rezervací, než kolik má kategorie aut. Metoda `free_units` proto pro každý den nové rezervace spočítá, kolik existujících rezervací ten den pokrývá, a vezme nejvytíženější den. Pokud je i v něm aspoň jedno auto volné, je volné po celou dobu. Nestačí přitom jen spočítat rezervace, které se s novou překrývají, protože se nemusí překrývat ve stejný den. Při kapacitě 2 se rezervace 1.–3., 4.–6. a 7.–10. všechny překrývají s novou 1.–10., ale nikdy neběží dvě najednou, takže se nová vejde. Konkrétní auto se přiděluje až při převzetí a zákazník ho drží celou dobu. Protože v žádném dni není rezervací víc než aut, je při převzetí vždy nějaké auto volné, a není proto potřeba rezervace přeskládávat.
+Kapacita se překročí jen tehdy, když v nějakém konkrétním dni běží víc rezervací, než kolik má kategorie aut. Metoda `free_units` proto pro každý den nové rezervace spočítá, kolik existujících rezervací ten den pokrývá, a vezme nejvytíženější den. Pokud je i v něm aspoň jedno auto volné, je volné po celou dobu. Nestačí přitom jen spočítat rezervace, které se s novou překrývají, protože se nemusí překrývat ve stejný den. Při kapacitě 2 se rezervace 1.–3., 4.–6. a 7.–10. všechny překrývají s novou 1.–10., ale nikdy neběží dvě najednou, takže se nová vejde.
 
 ## Jak to vyzkoušet
 
