@@ -1,0 +1,7 @@
+# Dates are relative to today so the fixtures never fall into the past.
+alice:
+  car_category: fabia
+  customer_name: Alice Novak
+  customer_email: alice@example.com
+  start_date: <%= Date.current + 10 %>
+  end_date: <%= Date.current + 12 %>
